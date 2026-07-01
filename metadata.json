@@ -1,0 +1,6 @@
+{
+  "name": "LearnSphere AI",
+  "description": "Personalized Learning Powered by Artificial Intelligence. A futuristic AI EdTech platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
