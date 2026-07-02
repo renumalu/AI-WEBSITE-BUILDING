@@ -19,10 +19,7 @@ const NAV_ITEMS = ['Home', 'Features', 'Dashboard', 'Courses', 'Career', 'About'
 export default function Home() {
   const [activeTab, setActiveTab] = useState('Home');
   const [scrolled, setScrolled] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-  const [user, setUser] = useState<{ email: string } | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,29 +27,8 @@ export default function Home() {
     };
     window.addEventListener('scroll', handleScroll);
     
-    // Check for existing JWT in localStorage
-    const token = localStorage.getItem('jwt_token');
-    if (token) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser({ email: 'student@learnsphere.ai' });
-    }
-    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const handleAuth = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Simulate JWT token generation
-    const mockJwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock_payload.mock_signature';
-    localStorage.setItem('jwt_token', mockJwt);
-    setUser({ email: 'student@learnsphere.ai' });
-    setIsAuthModalOpen(false);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('jwt_token');
-    setUser(null);
-  };
 
   const scrollToSection = (id: string) => {
     setActiveTab(id);
@@ -89,34 +65,12 @@ export default function Home() {
 
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
             <div className="hidden lg:flex items-center gap-2 md:gap-4 shrink-0">
-              {user ? (
-                <div className="flex items-center gap-4">
-                  <div className="hidden md:flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/50 flex items-center justify-center text-blue-400 font-bold text-sm">
-                      S
-                    </div>
-                    <span className="text-sm font-medium text-slate-300 hidden xl:block">{user.email}</span>
-                  </div>
-                  <button onClick={handleLogout} className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-full text-white backdrop-blur-md hover:bg-white/10 transition-all text-sm font-medium whitespace-nowrap">
-                    Log out
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <button 
-                    onClick={() => { setAuthMode('login'); setIsAuthModalOpen(true); }} 
-                    className="px-4 md:px-6 py-2.5 bg-white/5 border border-white/10 rounded-full text-white backdrop-blur-md hover:bg-white/10 transition-all text-sm font-medium whitespace-nowrap"
-                  >
-                    Log in
-                  </button>
-                  <button 
-                    onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }}
-                    className="px-4 md:px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full text-white shadow-lg shadow-blue-500/20 text-sm font-semibold hover:opacity-90 transition-all whitespace-nowrap"
-                  >
-                    Get Started
-                  </button>
-                </>
-              )}
+              <button 
+                onClick={() => scrollToSection('Dashboard')}
+                className="px-4 md:px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full text-white shadow-lg shadow-blue-500/20 text-sm font-semibold hover:opacity-90 transition-all whitespace-nowrap"
+              >
+                Get Started
+              </button>
             </div>
             
             <button 
@@ -152,160 +106,30 @@ export default function Home() {
               </div>
               
               <div className="mt-8 flex flex-col gap-4">
-                {user ? (
-                  <>
-                    <div className="flex items-center gap-3 py-4 border-b border-white/5">
-                      <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/50 flex items-center justify-center text-blue-400 font-bold">
-                        S
-                      </div>
-                      <span className="text-base font-medium text-slate-200">{user.email}</span>
-                    </div>
-                    <button 
-                      onClick={() => {
-                        handleLogout();
-                        setIsMobileMenuOpen(false);
-                      }} 
-                      className="w-full py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium hover:bg-white/10 transition-all"
-                    >
-                      Log out
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button 
-                      onClick={() => { 
-                        setIsMobileMenuOpen(false);
-                        setAuthMode('login'); 
-                        setIsAuthModalOpen(true); 
-                      }} 
-                      className="w-full py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium hover:bg-white/10 transition-all"
-                    >
-                      Log in
-                    </button>
-                    <button 
-                      onClick={() => { 
-                        setIsMobileMenuOpen(false);
-                        setAuthMode('signup'); 
-                        setIsAuthModalOpen(true); 
-                      }}
-                      className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl text-white shadow-lg shadow-blue-500/20 font-semibold hover:opacity-90 transition-all"
-                    >
-                      Get Started
-                    </button>
-                  </>
-                )}
+                <button 
+                  onClick={() => { 
+                    setIsMobileMenuOpen(false);
+                    scrollToSection('Dashboard');
+                  }}
+                  className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl text-white shadow-lg shadow-blue-500/20 font-semibold hover:opacity-90 transition-all"
+                >
+                  Get Started
+                </button>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Auth Modal */}
-      <AnimatePresence>
-        {isAuthModalOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-          >
-            <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-md bg-[#0a0a0f] border border-white/10 rounded-3xl p-8 relative shadow-2xl"
-            >
-              <button 
-                onClick={() => setIsAuthModalOpen(false)}
-                className="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors"
-              >
-                ✕
-              </button>
-              
-              <div className="text-center mb-8">
-                <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(37,99,235,0.4)]">
-                  <div className="w-5 h-5 bg-white rounded-full"></div>
-                </div>
-                <h3 className="text-2xl font-display font-bold text-white mb-2">
-                  {authMode === 'login' ? 'Welcome back' : 'Create an account'}
-                </h3>
-                <p className="text-slate-400 text-sm">
-                  {authMode === 'login' 
-                    ? 'Enter your credentials to access your dashboard' 
-                    : 'Join LearnSphere to start your personalized journey'}
-                </p>
-              </div>
-
-              <form onSubmit={handleAuth} className="space-y-4">
-                {authMode === 'signup' && (
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Full Name</label>
-                    <input 
-                      type="text" 
-                      required 
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                )}
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Email Address</label>
-                  <input 
-                    type="email" 
-                    required 
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
-                    placeholder="you@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Password</label>
-                  <input 
-                    type="password" 
-                    required 
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
-                    placeholder="••••••••"
-                  />
-                </div>
-                
-                <button 
-                  type="submit"
-                  className="w-full py-3.5 mt-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg shadow-blue-500/20 hover:opacity-90 transition-opacity"
-                >
-                  {authMode === 'login' ? 'Sign In' : 'Sign Up'}
-                </button>
-              </form>
-
-              <div className="mt-6 text-center text-sm text-slate-400">
-                {authMode === 'login' ? (
-                  <>
-                    Don&apos;t have an account?{' '}
-                    <button onClick={() => setAuthMode('signup')} className="text-cyan-400 hover:text-cyan-300 font-medium">
-                      Sign up
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    Already have an account?{' '}
-                    <button onClick={() => setAuthMode('login')} className="text-cyan-400 hover:text-cyan-300 font-medium">
-                      Log in
-                    </button>
-                  </>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <main>
-        <HeroSection onStartLearning={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }} />
+        <HeroSection onStartLearning={() => scrollToSection('Dashboard')} />
         <FeaturesSection />
         <DashboardSection />
         <CoursesSection />
         <CareerSection />
         <EcosystemSection />
         <AboutSection />
-        <ContactSection onStartLearning={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }} />
+        <ContactSection onStartLearning={() => scrollToSection('Dashboard')} />
       </main>
 
       <Footer />
@@ -918,7 +742,7 @@ function ContactSection({ onStartLearning }: { onStartLearning: () => void }) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button onClick={onStartLearning} className="px-8 py-4 rounded-full bg-white text-black font-semibold hover:bg-slate-200 transition-colors text-lg">
-                Create Free Account
+                Start Learning
               </button>
               <button onClick={() => setIsContactModalOpen(true)} className="px-8 py-4 rounded-full border border-white/20 text-white font-semibold hover:bg-white/5 transition-colors text-lg inline-flex items-center justify-center">
                 Contact Enterprise Sales
